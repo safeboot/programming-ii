@@ -1,2 +1,2 @@
-# programming-ii
-Set of tasks and examples from Programming II.
+# Programming II
+Set of tasks and examples from lectures and tests in Programming II.
