@@ -63,6 +63,7 @@ using namespace std;
     koda.
  
  */
+char* alocirajTekst(const char*);
 
 struct Datum {
     
@@ -158,6 +159,105 @@ struct Datum {
         
     }
     
+};
+
+struct Glumac {
+	
+	char _jmbg[14] = "";	// "\0" je na samom pocetku
+	char* _ime = nullptr;
+	char* _prezime = nullptr;
+	Datum* _datumRodjenja = nullptr;
+	char* _mjestoRodjenja = nullptr;
+	char _drzava[100] = "";
+	bool _spol;	// 1: Muski, 0: Zenski
+	
+	const char* getJmbg() {
+		return _jmbg;
+	}
+	
+	const char* getIme() {
+		return (_ime == nullptr) ? "" : _ime;
+	}
+	
+	const char* getPrezime() {
+		return (_prezime == nullptr) ? "" : _prezime;
+	}
+	
+	Datum& getDatumRodjenja() {
+		
+		// Datum datum;
+		//
+		// if (_datumRodjenja == nullptr) {
+		// 	  return datum;
+		// }
+		
+		return *_datumRodjenja;
+		
+	}
+	
+	const char* getMjestoRodjenja() {
+		return (_mjestoRodjenja == nullptr) ? "" : _mjestoRodjenja;
+	}
+	
+	const char* getDrzava() {
+		return _drzava;
+	}
+	
+	bool getSpol() {
+		return _spol;
+	}
+	
+	// Uvijek je dobra praksa da povratne vrijednost gettera imaju isti
+	// tip kao ulazne vrijednosti settera.
+	void setJmbg(const char* jmbg) {
+		
+		// strcpy(_jmbg, size(_jmbg), jmbg);
+		strcpy(_jmbg, jmbg);
+		
+	}
+	
+	void setIme(const char* ime) {
+		
+		// Delete komanda kada naide na nullptr, ignorise ga.
+		delete[] _ime;
+		
+		_ime = alocirajTekst(ime);
+		
+	}
+	
+	void setPrezime(const char* prezime) {
+		
+		delete[] _prezime;
+		
+		_prezime = alocirajTekst(prezime);
+		
+	}
+	
+	void setDatumRodjenja(Datum& datumRodjenja) {
+		
+		if (_datumRodjenja == nullptr) {
+			_datumRodjenja = new Datum;	// Alokacija jednog dinamickog objekta strukture Datum
+		}
+		
+		// Primjer 1
+		(*_datumRodjenja).setAll(datumRodjenja);
+		
+		// Primjer 2
+		_datumRodjenja->setAll(datumRodjenja);
+		
+	}
+	
+	void setDrzava(const char* drzava) {
+		
+		// strcpy(_drzava, size(_drzava), drzava);
+		strcpy(_drzava, drzava);
+		
+	}
+	
+	void setSpol(bool spol) {
+		_spol = spol;
+	}
+	
 };
 
 bool areEqual(Datum& datum1, Datum& datum2) {
