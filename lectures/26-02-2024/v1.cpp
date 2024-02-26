@@ -143,6 +143,12 @@ struct Datum {
         cout << getDan() << "." << getMjesec() << "." << getGodina() << endl;
         
     }
+	
+	int toInt() {
+		
+		return getGodina() * 365 + getMjesec() * 30 + getDan();
+		
+	}
     
     void dealokacija() {
         
@@ -153,6 +159,52 @@ struct Datum {
     }
     
 };
+
+bool areEqual(Datum& datum1, Datum& datum2) {
+	
+	return datum1.getDan() == datum2.getDan()
+		&& datum1.getMjesec() == datum2.getMjesec()
+		&& datum1.getGodina() == datum2.getGodina();
+	
+}
+
+// Datum& je izlazni parametar (ulaznik parametar koji izlazi iz
+// funkcije kao povratna vrijednost).
+Datum& getStarijiDatum(Datum& datum1, Datum& datum2) {
+	
+	return datum1.toInt() < datum2.toInt() ? datum1 : datum2;
+	
+}
+
+Datum& getNovijiDatum(Datum& datum1, Datum& datum2) {
+	
+	return datum1.toInt() > datum2.toInt() ? datum1 : datum2;
+	
+}
+
+Datum* getNajstarijiDatum(Datum datumi[], int size) {
+	
+	Datum* temp = &datumi[0];	// Adresa prvog objekta iz niza.
+	
+	for (int i = 0; i < size; i++) {
+		temp = &getStarijiDatum(*temp, datumi[i]);
+	}
+	
+	return temp;
+	
+}
+
+Datum* getNajnovijiDatum(Datum datumi[], int size) {
+	
+	Datum* temp = &datumi[0];	// Adresa prvog objekta iz niza.
+	
+	for (int i = 0; i < size; i++) {
+		temp = &getNovijiDatum(*temp, datumi[i]);
+	}
+	
+	return temp;
+	
+}
 
 // Z0.1 Utility funkcija za alokaciju teksta
 char* alocirajTekst(const char* tekst) {
@@ -166,7 +218,7 @@ char* alocirajTekst(const char* tekst) {
     
     int vel = strlen(tekst) + 1;
     
-    char* novi = new char[vel]; // Alokacija novog teksta
+    char* novi = new char[vel];	// Alokacija novog teksta
     
     // Xcode has forced my hand and I cannot use the secure version :(
     // strcpy_s(novi, vel, tekst);
@@ -178,36 +230,107 @@ char* alocirajTekst(const char* tekst) {
 
 void zadatak1() {
     
-    Datum danNezavisnosti;
+    // Datum danNezavisnosti;
     
-//    danNezavisnosti.setDan(2);  // Alokacija + promjena vrijednosti
-//    danNezavisnosti.setDan(12); // Promjena vrijednosti
-//    danNezavisnosti.setDan(1);  // Promjena vrijednosti
-//    
-//    danNezavisnosti.setMjesec(3);   // Alokacija + promjena vrijednosti
-//    danNezavisnosti.setMjesec(2);   // Promjena vrijednosti
-//    danNezavisnosti.setMjesec(3);   // Promjena vrijednosti
-//    
-//    danNezavisnosti.setGodina(2024);
+    // danNezavisnosti.setDan(2);  // Alokacija + promjena vrijednosti
+    // danNezavisnosti.setDan(12); // Promjena vrijednosti
+    // danNezavisnosti.setDan(1);  // Promjena vrijednosti
     
-    danNezavisnosti.setAll(1, 3, 2024);
-    danNezavisnosti.setAll(1, 5, 2024);
-    danNezavisnosti.setAll(5, 4, 2024);
+    // danNezavisnosti.setMjesec(3);   // Alokacija + promjena vrijednosti
+    // danNezavisnosti.setMjesec(2);   // Promjena vrijednosti
+    // danNezavisnosti.setMjesec(3);   // Promjena vrijednosti
     
-    Datum noviDatum;
+    // danNezavisnosti.setGodina(2024);
+    
+    // danNezavisnosti.setAll(1, 3, 2024);
+    // danNezavisnosti.setAll(1, 5, 2024);
+    // danNezavisnosti.setAll(5, 4, 2024);
+    
+    // Datum noviDatum;
     
     // Primjer 1
-    noviDatum.setAll(danNezavisnosti);
+    // noviDatum.setAll(danNezavisnosti);
     
     // Primjer 2
-    noviDatum.setAll(danNezavisnosti.getDan(), danNezavisnosti.getMjesec(), danNezavisnosti.getGodina());
+    // noviDatum.setAll(danNezavisnosti.getDan(), danNezavisnosti.getMjesec(), danNezavisnosti.getGodina());
     
     // Primjer 3
-    noviDatum.setAll(&danNezavisnosti);
+    // noviDatum.setAll(&danNezavisnosti);
     
-    danNezavisnosti.ispis();
+    // danNezavisnosti.ispis();
+	
+	/*
+	 
+		Ovaj dio moze da dovede do RE-a. Zbog toda sto imamo raw_copy (bukvalno
+		kopiranje) vrijednosti attributa iz jednog objekta u drugi.
+	 
+		(Vrijednost pokazivaca iz objekta danNezavisnoti se kopiraju u vrijednost
+		pokazivaca objekta "noviDatum2").
+	 
+		[To je problem], iz razloga sto imamo pokazivace u razlicitim objektima
+		sa istim adresama.
+	 
+		Ovo ce dovesti do rusenja programa zbog pokusaja dvostruke dealokacije
+		istog memorijskog prostora.
+	 
+		---
+	 
+		Ova greska ce se adekvatno rijesavati implementacijom eksplicitnog
+		konstruktora kopije.
+	 
+	 */
+	// Datum noviDatum2 = danNezavisnosti; --> GRESKA!!!
     
-    danNezavisnosti.dealokacija();
+    // danNezavisnosti.dealokacija();
+	
+	// noviDatum.ispis();
+	
+	// noviDatum.dealokacija();
+	
+	Datum prviMart;
+	prviMart.setAll(1, 3, 2024);
+	
+	Datum prviMaj;
+	prviMaj.setAll(1, 5, 2024);
+	
+	areEqual(prviMart, prviMaj) ? cout << "Datumi su isti." << endl : cout << "Datumi nisu isti." << endl;
+	
+	Datum danD, operacijaBarbarossa, sarajevskiAtentat, apolloSlijetanje, blackThursday;
+	
+	danD.setAll(6, 6, 1944);
+	operacijaBarbarossa.setAll(2, 6, 1941);
+	sarajevskiAtentat.setAll(28, 6, 1914);
+	apolloSlijetanje.setAll(24, 7, 1969);
+	blackThursday.setAll(24, 10, 1929);
+	
+	Datum historijskiDogadjaji[5];
+	
+	historijskiDogadjaji[0].setAll(danD);
+	historijskiDogadjaji[1].setAll(operacijaBarbarossa);
+	historijskiDogadjaji[2].setAll(sarajevskiAtentat);
+	historijskiDogadjaji[3].setAll(apolloSlijetanje);
+	historijskiDogadjaji[4].setAll(blackThursday);
+	
+	cout << endl << "Najstariji datum: " << endl;
+	getNajstarijiDatum(historijskiDogadjaji, 5)->ispis();
+	
+	cout << endl << "Najnoviji datum: " << endl;
+	getNajnovijiDatum(historijskiDogadjaji, 5)->ispis();
+	
+	danD.dealokacija();
+	operacijaBarbarossa.dealokacija();
+	sarajevskiAtentat.dealokacija();
+	apolloSlijetanje.dealokacija();
+	blackThursday.dealokacija();
+	
+	for (int i = 0; i < 5; i++) {
+		historijskiDogadjaji[i].dealokacija();
+	}
+	
+	prviMart.dealokacija();
+	prviMaj.dealokacija();
+	
+	cout << endl << "<><><> Dealokacija uspjesna! <><><>" << endl;
     
 }
 
