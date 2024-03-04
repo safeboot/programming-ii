@@ -187,6 +187,18 @@ public:
 		
 	}
 	
+	void setAll(Glumac& glumac) {
+		
+		setJmbg(glumac.getJmbg());
+		setIme(glumac.getIme());
+		setPrezime(glumac.getPrezime());
+		setDatumRodjenja(glumac.getDatumRodjenja());
+		setMjestoRodjenja(glumac.getMjestoRodjenja());
+		setDrzava(glumac.getDrzava());
+		setSpol(glumac.getSpol());
+		
+	}
+	
 	const char* getJmbg() {
 		return _jmbg;
 	}
@@ -310,6 +322,127 @@ public:
 		delete[] _ime, delete[] _prezime, delete[] _mjestoRodjenja;
 		
 		_ime = _prezime = _mjestoRodjenja = nullptr, _datumRodjenja = nullptr;
+		
+	}
+	
+};
+
+class Film {
+	
+private:
+	// Opisni Atributi
+	char _filmID[50] = "";	// ISAN standard
+	char* _naziv = nullptr;
+	char _zanr[40] = "";
+	int _godinaIzlaska = 0;
+	
+	int _trenutnoGlumaca = 0;	// Brojacka varijabla
+	Glumac _glumackaPostava[20];
+	
+	int _trenutnaOcjena = 0;	// Brojacka varijabla
+	int* _ocjene = nullptr;
+	
+public:
+	const char* getFilmID() {
+		return _filmID;
+	}
+	
+	const char* getNaziv() {
+		return (_naziv == nullptr) ? "" : _naziv;
+	}
+	
+	const char* getZanr() {
+		return _zanr;
+	}
+	
+	int getGodinaIzlaska() {
+		return _godinaIzlaska;
+	}
+	
+	int getTrenutnoGlumaca() {
+		return _trenutnoGlumaca;
+	}
+	
+	Glumac* getGlumackaPostava() {
+		return _glumackaPostava;
+	}
+	
+	int getTrenutnaOcjena() {
+		return _trenutnaOcjena;
+	}
+	
+	int* getOcjene() {
+		return _ocjene;
+	}
+	
+	void setFilmID(const char* filmID) {
+		
+		// Use secure version!!!1
+		// strcpy_s(_filmID, size(_filmID, filmID))
+		strcpy(_filmID, filmID);
+		
+	}
+	
+	void setNaziv(const char* naziv) {
+		
+		delete[] _naziv;
+		_naziv = alocirajTekst(naziv);
+		
+	}
+	
+	void setZanr(const char* zanr) {
+		
+		// strcpy_s(_zanr, size(_zanr, zanr))
+		strcpy(_zanr, zanr);
+		
+	}
+	
+	void setGodinaIzlaska(int godinaIzlaska) {
+		_godinaIzlaska = godinaIzlaska;
+	}
+	
+	void setGlumackaPostava(Glumac* glumci, int velicina) {
+		
+		// Code goes here...soon™
+		
+	}
+	
+	void setOcjene(int* ocjene, int velicina) {
+		
+		// Code goes here... soon™
+		
+	}
+	
+	bool dodajGlumca(Glumac& glumac) {
+		
+		if (getTrenutnoGlumaca() == size(_glumackaPostava)) {
+			return false;
+		}
+		
+		_glumackaPostava[_trenutnoGlumaca].setAll(glumac);
+		_trenutnoGlumaca++;
+		
+		return true;
+		
+	}
+	
+	bool dodajOcjenu(int ocjena) {
+		
+		/*
+			
+			Sa svakim pozivom je potrebno uraditi dinamicko prosirivanje
+			niza za 1.
+		 
+			Ne smiju se izgubiti podaci o prethodnim ocjenama.
+		 
+			Hint: sacuvati stari niz u jedan privremeni pokazivac,
+			kreirati novi niz (veci za 1), kopirati iz starog u novi,
+			kopirati vrijednost 'ocjena' na odgovarajuce mjesto i na
+			kraju uvecati brojac.
+		 
+			GL ;)
+		 
+		 */
 		
 	}
 	
@@ -498,6 +631,25 @@ void zadatak2() {
 	temp2.setAll(17, 8, 1943);
 	
 	alPacino.setAll("1304996055555", "Alfredo", "Pacino", temp1, "Manhattan, NYC", "SAD", true);
+	
+	// deNiro = alPacino -> Pogresno kopiranje
+	deNiro.setAll(alPacino);	// Ispravno kopiranje
+	
+	deNiro.setIme("Robert");
+	deNiro.setPrezime("De Niro");
+	deNiro.setDatumRodjenja(temp2);
+	deNiro.setMjestoRodjenja("Greenwich Village");
+	// deNiro.setDrzava("SAD");
+	// deNiro.setSpol(true);
+	
+	alPacino.ispis();
+	deNiro.ispis();
+	
+	temp1.dealokacija();
+	temp2.dealokacija();
+	
+	alPacino.dealokacija();
+	deNiro.dealokacija();
     
 }
 
