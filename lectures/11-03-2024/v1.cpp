@@ -75,15 +75,15 @@ private:
     // *(nullptr) -> runtime error [dereferenciranje nulte adrese je automatska greska]
     
 public:
-    int getDan() {
+    int getDan() const {
         return (_dan == nullptr) ? 1 : *_dan;
     }
     
-    int getMjesec() {
+    int getMjesec() const {
         return (_mjesec == nullptr) ? 1 : *_mjesec;
     }
     
-    int getGodina() {
+    int getGodina() const {
         return (_godina == nullptr) ? 2024 : *_godina;
     }
     
@@ -116,8 +116,16 @@ public:
         *_godina = godina;
         
     }
+	
+	Datum() {
+	
+		setDan(13);
+		setMjesec(4);
+		setGodina(2020);
+		
+	}
     
-    void setAll(int dan, int mjesec, int godina) {
+    Datum(int dan, int mjesec, int godina) {
         
         setDan(dan);
         setMjesec(mjesec);
@@ -125,21 +133,29 @@ public:
         
     }
     
-    void setAll(Datum& object) {
+    Datum(const Datum& object) {
         
         setDan(object.getDan());
         setMjesec(object.getMjesec());
         setGodina(object.getGodina());
         
     }
-    
-    void setAll(Datum* object) {
-        
-        setDan(object->getDan());
-        setMjesec(object->getMjesec());
-        setGodina(object->getGodina());
-        
-    }
+	
+	void setAll(Datum& object) {
+
+		setDan(object.getDan());
+		setMjesec(object.getMjesec());
+		setGodina(object.getGodina());
+
+	}
+	
+	void setAll(Datum* object) {
+
+		setDan(object->getDan());
+		setMjesec(object->getMjesec());
+		setGodina(object->getGodina());
+
+	}
     
     void ispis() {
         
@@ -153,7 +169,7 @@ public:
 		
 	}
     
-    void dealokacija() {
+    ~Datum() {
         
         delete _dan, delete _mjesec, delete _godina;
         
@@ -271,7 +287,7 @@ public:
 		(*_datumRodjenja).setAll(datumRodjenja);
 		
 		// Primjer 2
-		_datumRodjenja->setAll(datumRodjenja);
+		// _datumRodjenja->setAll(datumRodjenja);
 		
 	}
 	
@@ -315,7 +331,7 @@ public:
 		// Ovo ce ispisati error ako je null!
 		// _datumRodjenja->dealokacija();
 		
-		getDatumRodjenja().dealokacija(); // Brisanje atributa
+		// getDatumRodjenja().dealokacija(); // Brisanje atributa
 		
 		delete _datumRodjenja; // Brisanje pokazivaca
 		
@@ -434,7 +450,7 @@ public:
 		
 		// Kopiranje
 		for (int i = 0; i < _trenutnaOcjena; i++) {
-			_ocjene = ocjene[i];
+			_ocjene[i] = ocjene[i];
 		}
 		
 	}
@@ -445,6 +461,20 @@ public:
 		setNaziv(naziv);
 		setZanr(zanr);
 		setGodinaIzlaska(godinaIzlaska);
+		
+	}
+	
+	// Kopiranje
+	void setAll(Film& film) {
+		
+		setFilmID(film.getFilmID());
+		setNaziv(film.getNaziv());
+		setZanr(film.getZanr());
+		setGodinaIzlaska(film.getGodinaIzlaska());
+		
+		setGlumackaPostava(film.getGlumackaPostava(), film.getTrenutnoGlumaca());
+		
+		setOcjene(film.getOcjene(), film.getTrenutnaOcjena());
 		
 	}
 	
@@ -660,48 +690,13 @@ void zadatak1() {
 	
 	// noviDatum.dealokacija();
 	
-	Datum prviMart;
-	prviMart.setAll(1, 3, 2024);
+	Datum prviMart(1, 3, 2024);
 	
-	Datum prviMaj;
-	prviMaj.setAll(1, 5, 2024);
+	Datum prviMaj(1, 5, 2024);
 	
 	areEqual(prviMart, prviMaj) ? cout << "Datumi su isti." << endl : cout << "Datumi nisu isti." << endl;
 	
-	Datum danD, operacijaBarbarossa, sarajevskiAtentat, apolloSlijetanje, blackThursday;
-	
-	danD.setAll(6, 6, 1944);
-	operacijaBarbarossa.setAll(2, 6, 1941);
-	sarajevskiAtentat.setAll(28, 6, 1914);
-	apolloSlijetanje.setAll(24, 7, 1969);
-	blackThursday.setAll(24, 10, 1929);
-	
-	Datum historijskiDogadjaji[5];
-	
-	historijskiDogadjaji[0].setAll(danD);
-	historijskiDogadjaji[1].setAll(operacijaBarbarossa);
-	historijskiDogadjaji[2].setAll(sarajevskiAtentat);
-	historijskiDogadjaji[3].setAll(apolloSlijetanje);
-	historijskiDogadjaji[4].setAll(blackThursday);
-	
-	cout << endl << "Najstariji datum: " << endl;
-	getNajstarijiDatum(historijskiDogadjaji, 5)->ispis();
-	
-	cout << endl << "Najnoviji datum: " << endl;
-	getNajnovijiDatum(historijskiDogadjaji, 5)->ispis();
-	
-	danD.dealokacija();
-	operacijaBarbarossa.dealokacija();
-	sarajevskiAtentat.dealokacija();
-	apolloSlijetanje.dealokacija();
-	blackThursday.dealokacija();
-	
-	for (int i = 0; i < 5; i++) {
-		historijskiDogadjaji[i].dealokacija();
-	}
-	
-	prviMart.dealokacija();
-	prviMaj.dealokacija();
+	Datum danD(6, 6, 1944), operacijaBarbarossa(2, 6, 1941), sarajevskiAtentat(28, 6, 1914), apolloSlijetanje(24, 7, 1969), blackThursday(24, 10, 1929);
 	
 	cout << endl << "<><><> Dealokacija uspjesna! <><><>" << endl;
     
@@ -710,10 +705,7 @@ void zadatak1() {
 void zadatak2() {
     
 	Glumac alPacino, deNiro;
-	Datum temp1, temp2;
-	
-	temp1.setAll(25, 4, 1940);
-	temp2.setAll(17, 8, 1943);
+	Datum temp1(25, 4, 1940), temp2(17, 8, 1943);
 	
 	alPacino.setAll("1304996055555", "Alfredo", "Pacino", temp1, "Manhattan, NYC", "SAD", true);
 	
@@ -730,9 +722,6 @@ void zadatak2() {
 	alPacino.ispis();
 	deNiro.ispis();
 	
-	temp1.dealokacija();
-	temp2.dealokacija();
-	
 	alPacino.dealokacija();
 	deNiro.dealokacija();
     
@@ -741,10 +730,7 @@ void zadatak2() {
 void zadatak3() {
     
     // Klasa Film
-	Datum temp1, temp2;
-	
-	temp1.setAll(25, 4, 1940);
-	temp2.setAll(25, 4, 1940);
+	Datum temp1(25, 4, 1940), temp2(25, 4, 1940);
 	
 	Glumac alPacino, deNiro;
 	
@@ -752,9 +738,35 @@ void zadatak3() {
 	deNiro.setAll("1708943055555", "Robert", "De Niro", temp2, "NYC", "SAD", true);
 	
 	Film irishman;
-	irishman.setNaziv("The Irishman");
+	irishman.setAll("XXXX-AAAA-BBBB-CCCC", "The Irishman", "Biografija, krimi, drama", 2019);
 	
-	cout << endl;
+	irishman.dodajGlumca(alPacino);
+	irishman.dodajGlumca(deNiro);
+	
+	irishman.dodajOcjenu(10);
+	irishman.dodajOcjenu(8);
+	irishman.dodajOcjenu(9);
+	irishman.dodajOcjenu(8);
+	irishman.dodajOcjenu(8);
+	irishman.dodajOcjenu(7);
+	irishman.dodajOcjenu(10);
+	
+	// Ispis
+	irishman.ispis();
+	
+	Film kopija;
+	kopija.setAll(irishman);	// Kopiranje
+	
+	cout << "\n\n ********** ISPIS ********** \n\n";
+	
+	// Ispis kopije
+	kopija.ispis();
+	
+	// Dealokacija
+	irishman.dealokacija();
+	
+	alPacino.dealokacija();
+	deNiro.dealokacija();
     
 }
 
