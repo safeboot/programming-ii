@@ -358,14 +358,29 @@ class Uposlenik {
 public:
     
     // Z3.1
-    void unos(const char* ime, const char* prezime, Datum datum, bool spol, const char* radnoM, const char* grad, const char* email) {
+    void unos(const char* ime, const char* prezime, Datum datum, bool spol, const char* radnoMjesto, const char* grad, const char* email) {
         
-        
+        setIme(ime);
+        setPrezime(prezime);
+        setDatumRodjenja(datum);
+        setSpol(spol);
+        setRadnoMjesto(radnoMjesto);
+        setGrad(grad);
+        setEmail(email);
         
     }
+    
     // Z3.2
     void unos(Uposlenik& uposlenik) {
-        //implementirati funkciju
+        
+        setIme(uposlenik.getIme());
+        setPrezime(uposlenik.getPrezime());
+        setDatumRodjenja(uposlenik.getDatumRodjenja());
+        setSpol(uposlenik.getSpol());
+        setRadnoMjesto(uposlenik.getRadnoMjesto());
+        setGrad(uposlenik.getGrad());
+        setEmail(uposlenik.getEmail());
+        
     }
 
     // Z3.3
@@ -504,62 +519,166 @@ class Kino {
     char* _naziv = nullptr;
     char _adresa[100] = "";
 
-    int* _maxBrojDvorana{ nullptr }; // pokazivac na varijablu (sadrzi vrijednost velicine niza)
-    int _trenutnoDvorana = 0; //brojac (pocinje od 0)
-    Dvorana* _dvorane{ nullptr }; // pokazivac na niz objekata
+    int* _maxBrojDvorana { nullptr };   // Pokazivac na varijablu (sadrzi vrijednost velicine niza)
+    int _trenutnoDvorana = 0;   // Brojac (pocinje od 0)
+    Dvorana* _dvorane { nullptr };   // Pokazivac na niz objekata
 
-    int _trenutnoUposlenika = 0; //brojac (pocinje od 0)
-    Uposlenik* _uposlenici[50] = { nullptr }; // niz pokazivaca na objekte tipa Uposlenik
+    int _trenutnoUposlenika = 0;    // Brojac (pocinje od 0)
+    Uposlenik* _uposlenici[50] = { nullptr };   // Niz pokazivaca na objekte tipa Uposlenik
     
 public:
     
     // Z4.1
     void unos(const char* naziv, const char* adresa, int maxBrojDvorana) {
-        //implementirati funkciju
+        
+        setNaziv(naziv);
+        setAdresa(adresa);
+        setDvorane(maxBrojDvorana); // Pripremanje niza [dinamicnog]
+        
     }
+    
     // Z4.2
-    const char* getNaziv() const { return ""; } //implementirati funkciju
-    const char* getAdresa() const { return ""; } //implementirati funkciju
-    int getMaxBrojDvorana() const { return  0; } //implementirati funkciju
-    int getTrenutnoDvorana() const { return _trenutnoDvorana; }
-    int getTrenutnoUposlenika() const { return _trenutnoUposlenika; }
+    const char* getNaziv() const {
+        return (_naziv == nullptr) ? "" : _naziv;
+    }
+    
+    const char* getAdresa() const {
+        return _adresa;
+    }
+    
+    int getMaxBrojDvorana() const {
+        return (_maxBrojDvorana == nullptr) ? 0 : *_maxBrojDvorana;
+    }
+    
+    int getTrenutnoDvorana() const {
+        return _trenutnoDvorana;
+    }
+    
+    int getTrenutnoUposlenika() const {
+        return _trenutnoUposlenika;
+    }
     
     // Z4.3
     void setNaziv(const char* naziv) {
-        //implementirati funkciju
+        
+        delete[] _naziv;
+        
+        _naziv = alocirajTekst(naziv);
+        
     }
     
     // Z4.4
     void setAdresa(const char* adresa) {
-        //implementirati funkciju
+        
+        // strcpy_s(_adresa, size(_adresa), adresa);
+        strcpy(_adresa, adresa);
+        
     }
     
     // Z4.5
     void setDvorane(int maxBrojDvorana) {
-        //implementirati funkciju
+        
+        // Dealokacija svake dvorane iz starog niza
+        for (int i = 0; i < _trenutnoDvorana; i++) {
+            _dvorane[i].dealokacija();
+        }
+        
+        // Brisanje starog dinamicnog niza
+        delete[] _dvorane;
+        
+        if (_maxBrojDvorana == nullptr) {
+            _maxBrojDvorana = new int;  // Alokacija jedne vrijednosti
+        }
+        
+        // Promjena dimenzija [za kreiranje novog dinamicnog niza]
+        *_maxBrojDvorana = maxBrojDvorana;
+        
+        // Alokacija novog niza
+        _dvorane = new Dvorana[*_maxBrojDvorana];
+        
+        // Resetovanje brojaca
+        _trenutnoDvorana = 0;
+        
     }
 
     // Z4.6
-    bool dodajDvoranu(Dvorana& d) {
-        //implementirati funkciju
-        return false;
+    bool dodajDvoranu(Dvorana& dvorana) {
+        
+        if (_trenutnoDvorana == getMaxBrojDvorana()) {
+            return false;
+        }
+        
+        _dvorane[_trenutnoDvorana].unos(dvorana);
+        _trenutnoDvorana++;
+        
+        return true;
+        
     }
     
     // Z4.7
-    bool dodajUposlenika(Uposlenik& u) {
-        //implementirati funkciju
-        return false;
+    bool dodajUposlenika(Uposlenik& uposlenik) {
+        
+        if (_trenutnoUposlenika == size(_uposlenici)) {
+            return false;
+        }
+        
+        _uposlenici[_trenutnoUposlenika] = new Uposlenik;
+        _uposlenici[_trenutnoUposlenika]->unos(uposlenik);
+        _trenutnoUposlenika++;
+        
+        return true;
+        
     }
     
     // Z4.8
-    // ispisati naziv kina, adresu, nazive dvorana, te imena i prezimena uposlenika
+    // Ispisati naziv kina, adresu, nazive dvorana, te imena i prezimena uposlenika
     void ispis() {
-        //implementirati funkciju
+        
+        cout << "Naziv: " << getNaziv() << endl;
+        cout << "Adresa: " << getAdresa() << endl;
+        
+        cout << "*************** DVORANE ***************\n";
+        
+        for (int i = 0; i < getTrenutnoDvorana(); i++) {
+            cout << _dvorane[i].getNaziv() << endl;
+        }
+        
+        cout << "*************** UPOSLENICI ***************\n";
+        
+        for (int i = 0; i < getTrenutnoUposlenika(); i++) {
+            cout << _uposlenici[i]->getIme() << " " << _uposlenici[i]->getPrezime() << endl;
+        }
+        
     }
     
     // Z4.9
     void dealokacija() {
-        //implementirati funkciju
+        
+        delete _naziv;
+        
+        _naziv = nullptr;
+        
+        delete _maxBrojDvorana; // Pokazivac na jednu stvar
+        
+        _maxBrojDvorana = nullptr;
+        
+        for (int i = 0; i < _trenutnoDvorana; i++) {
+            _dvorane[i].dealokacija();
+        }
+        
+        delete[] _dvorane;
+        
+        _dvorane = nullptr;
+        
+        // Dealokacija svakog [dinamicnog] objekta iz niza pokazivaca
+        for (int i = 0; i < _trenutnoUposlenika; i++) {
+            
+            _uposlenici[i]->dealokacija();  // Dealokacija njegovih atributa
+            delete _uposlenici[i];  // Dealokacija njega (objekta)
+            _uposlenici[i] = nullptr;
+            
+        }
+        
     }
     
 };
