@@ -284,14 +284,23 @@ public:
     // Z2.5
     void ispis() const {
         
-        // implementirati funkciju
+        cout << "Ime i prezime: " << getIme() << " " << getPrezime() << endl;
+        cout << "Zemlja porijekla: " << getZemljaPorijekla() << endl;
+        cout << "Datum rodjenja: ";
+        
+        getDatumRodjenja().ispis();
+        
+        cout << endl;
+        
+        cout << "Spol: " << (getSpol() ? "Muski" : "Zenski") << endl;
         
     }
     
     // Z2.6
     ~Glumac() {
         
-        // implementirati funkciju
+        delete[] _ime, delete[] _prezime, delete[] _zemljaPorijekla;
+        delete _datumRodjenja, delete _spol;
         
     }
     
@@ -318,57 +327,96 @@ public:
     }
     
     // Z3.1 :: user-def ctor
-    Epizoda(const char* naziv, int trajanje, const char* kratakOpis, Datum datumPremijere, int ukupnoOcjena) {
+    Epizoda(const char* naziv, int trajanje, const char* kratakSadrzaj, Datum datumPremijere, int ukupnoOcjena) {
         
-        // implementirati funkciju
+        setNaziv(naziv);
+        setTrajanje(trajanje);
+        setKratakSadrzaj(kratakSadrzaj);
+        setDatumPremijere(datumPremijere);
+        setOcjene(0, ukupnoOcjena); // Salje trenutno i max [postavljanje niza]
+        
+        // setOcjene(trenutno, max, ocjene) -> trenutno, max, drugi niz [postavljanje niza + kopiranje iz drugog niza]
         
     }
 
     // Z3.2 :: copy ctor
-    Epizoda(const Epizoda& obj) {
+    Epizoda(const Epizoda& epizoda) {
         
-        // implementirati funkciju
+        setNaziv(epizoda.getNaziv());
+        setTrajanje(epizoda.getTrajanje());
+        setKratakSadrzaj(epizoda.getKratakSadrzaj());
+        setDatumPremijere(epizoda.getDatumPremijere());
+        setOcjene(epizoda.getTrenutnoOcjena(), epizoda.getMaxBrojOcjena(), epizoda.getOcjene());
         
     }
 
     // Z3.3 :: getteri
-    const char* getNaziv() const { return ""; } // implementirati funkciju
-    int getTrajanje() const { return 0; }   // implementirati funkciju
-    const char* getKratakSadrzaj() const { return ""; } // implementirati funkciju
-    Datum getDatumPremijere() const { return _datumPremijere; }
-    int getTrenutnoOcjena() const { return _trenutnoOcjena; }
-    int getMaxBrojOcjena() const { return _maxOcjena; }
-    int* getOcjene() const { return nullptr; }  // implementirati funkciju
+    const char* getNaziv() const {
+        return (_naziv == nullptr) ? "" : _naziv;
+    }
+    
+    int getTrajanje() const {
+        return (_trajanje == nullptr) ? 0 : *_trajanje;
+    }
+    
+    const char* getKratakSadrzaj() const {
+        return _kratakSadrzaj;
+    }
+    
+    Datum getDatumPremijere() const {
+        return _datumPremijere;
+    }
+    
+    int getTrenutnoOcjena() const {
+        return _trenutnoOcjena;
+    }
+    
+    int getMaxBrojOcjena() const {
+        return _maxOcjena;
+    }
+    
+    int* getOcjene() const {
+        return nullptr;
+    }
     
     int getOcjena(int index) const {
         
-        // implementirati funkciju
-        return 0;
+        if (index < 0 || index > getTrenutnoOcjena()) {
+            return 0;
+        }
+        
+        return _ocjene[index];
         
     }
     
     // Z3.4 :: setteri
     void setNaziv(const char* naziv) {
         
-        // implementirati funkciju
+        delete[] _naziv;
+        _naziv = alocirajTekst(naziv);
         
     }
     
     void setTrajanje(int trajanje) {
         
-        // implementirati funkciju
+        if (_trajanje == nullptr) {
+            _trajanje = new int;
+        }
+        
+        *_trajanje = trajanje;
         
     }
     
     void setKratakSadrzaj(const char* kratakSadrzaj) {
         
-        // implementirati funkciju
+        strcpy_s(_kratakSadrzaj, size(_kratakSadrzaj), kratakSadrzaj);
+        // strcpy(_kratakSadrzaj, kratakSadrzaj);   // for my unix homies
         
     }
     
     void setDatumPremijere(Datum datum) {
         
-        // implementirati funkciju
+        _datumPremijere.set(datum); // Pogresno: _datumPremijere = datum;
         
     }
     
@@ -376,14 +424,40 @@ public:
     // također, metoda mora uraditi kopiranje ocjena ako je ulazni pokazivač 'ocjene' različit od NULL
     void setOcjene(int trenutnoOcjena, int maxOcjena, int* ocjene = nullptr) {
         
-        // implementirati funkciju
+        // Ocjene
+        // 0 1 2 3 4 5    6
+        // 5 6 7 8 9 JUNK JUNK
+        // Trenutno: 5
+        // maxOcjena: 7
+        
+        delete[] _ocjene;   // Dealokacija starog niza
+        
+        _maxOcjena = maxOcjena; // Promjena velicine
+        _trenutnoOcjena = 0;    // Resetovanje brojaca
+        
+        _ocjene = new int[_maxOcjena];
+        
+        if (ocjene != nullptr) {
+            
+            for (int i = 0; i < trenutnoOcjena; i++) {
+                
+                // _ocjene[i] = ocjene[i];
+                dodajOcjenu(ocjene[i]);
+                
+            }
+            
+        }
         
     }
 
     // Z3.6 :: metoda za kopiranje vrijednosti
-    void set(const Epizoda& e) {
+    void set(const Epizoda& epizoda) {
         
-        // implementirati funkciju
+        setNaziv(epizoda.getNaziv());
+        setTrajanje(epizoda.getTrajanje());
+        setKratakSadrzaj(epizoda.getKratakSadrzaj());
+        setDatumPremijere(epizoda.getDatumPremijere());
+        setOcjene(epizoda.getTrenutnoOcjena(), epizoda.getMaxBrojOcjena(), epizoda.getOcjene());
         
     }
 
@@ -394,7 +468,21 @@ public:
     //  * Dealocirati stari niz
     void expandOcjene(int uvecanje) {
         
-        // implementirati funkciju
+        if (uvecanje <= 0) {
+            return;
+        }
+        
+        int* temp = _ocjene;
+        _ocjene = new int[_maxOcjena + uvecanje];
+        
+        for (int i = 0; _trenutnoOcjena; i++) {
+            _ocjene[i] = temp[i];
+        }
+        
+        _maxOcjena += uvecanje;
+        
+        delete[] temp;
+        temp = nullptr;
         
     }
 
@@ -402,36 +490,65 @@ public:
     // Ukoliko je brojac dosao do kraja (jednak velicini niza), uraditi prosirivanje niza za 10 elemenata
     void dodajOcjenu(int ocjena) {
         
-        // implementirati funkciju
+        if (_trenutnoOcjena == _maxOcjena) {
+            expandOcjene(10);
+        }
+        
+        _ocjene[_trenutnoOcjena] = ocjena;
+        _trenutnoOcjena++;
         
     }
     
     // Z3.9 :: metoda za uklanjanje zadnje ocjene
     bool ukloniZadnjuOcjenu() {
         
-        // implementirati funkciju
-        return false;
+        if (_trenutnoOcjena == 0) {
+            return false;
+        }
+        
+        _trenutnoOcjena--;
+        
+        return true;
         
     }
     // Z3.10
     float getProsjecnaOcjena() const {
         
-        // implementirati funkciju
-        return 0.0f;
+        float suma = 0.0f;
+        
+        if (_trenutnoOcjena == 0) {
+            return suma;
+        }
+        
+        for (int i = 0; i < _trenutnoOcjena; i++) {
+            suma += _ocjene[i];
+        }
+        
+        return suma / _trenutnoOcjena;
         
     }
     
     // Z3.11
     void ispis() const {
         
-        // implementirati funkciju
+        cout << "Naziv: " << getNaziv() << endl;
+        cout << "Trajanje (u minutama): " << getTrajanje() << endl;
+        cout << "Kratak sadrzaj: " << getKratakSadrzaj() << endl;
+        cout << "Premijerno prikazivanje: ";
+        
+        getDatumPremijere().ispis();
+        
+        cout << endl;
+        
+        cout << "Prosjecna ocjena: " << getProsjecnaOcjena() << endl;
         
     }
     
     // Z3.12
     ~Epizoda() {
         
-        // implementirati funkciju
+        delete[] _naziv, delete[] _ocjene;
+        delete _trajanje;
         
     }
     
