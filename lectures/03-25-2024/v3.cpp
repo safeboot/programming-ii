@@ -15,222 +15,458 @@ using namespace std;
 
 // Z1.0
 char* alocirajTekst(const char* tekst) {
-    // implementirati funkciju
-    return nullptr;
+    
+    if (tekst == nullptr) {
+        return nullptr;
+    }
+    
+    int velicina = strlen(tekst) + 1;
+        
+    char* novi = new char[velicina];
+
+    // strcpy_s(novi, velicina, tekst);
+    strcpy(novi, tekst);
+
+    return novi;
+    
 }
 
-class Datum
-{
-    int* _dan{ nullptr };
-    int* _mjesec{ nullptr };
-    int* _godina{ nullptr };
+class Datum {
+    
+    int* _dan { nullptr };
+    int* _mjesec { nullptr };
+    int* _godina { nullptr };
+    
 public:
+    
     // Z1.1 :: dflt. ctor
+    // postaviti na vrijednost 1.1.2024
     Datum() {
-        // implementirati funkciju
-        // postaviti na vrijednost 1.1.2024
+        
+        /*
+            
+            Datum d;
+            Datum(1, 5, 2024);  // privremena (temporary) vrijednost
+         
+            Datum datumi[100];  // dflt ctor
+         
+             Datum * pok = new Datum;    // dflt ctor
+             Datum * pok = new Datum[100];  // dflt ctor
+             
+         
+         */
+        
+        setDan(1);
+        setMjesec(1);
+        setGodina(2024);
+        
     }
+    
     // Z1.2 :: user-def. ctor
-    Datum(int d, int m, int g) {
-        // implementirati funkciju
+    Datum(int dan, int mjesec, int godina) {
+        
+        /*
+         
+            Datum d(13, 04, 2024);  // user-def ctor
+            Datum * pok = new Datum(1, 7, 2024);
+         
+         */
+        
+        setDan(dan);
+        setMjesec(mjesec);
+        setGodina(godina);
+        
     }
+    
     // Z1.3 :: copy ctor
-    Datum(const Datum& obj) {
-        // implementirati funkciju
+    Datum(const Datum& datum) {
+        
+        /*
+         
+            1. 'datum' se ne moze mijenjati
+            2. const omogucuje da se proslijeduju i temporary/constant vrijednosti
+         
+         */
+        
+        setDan(datum.getDan());
+        setMjesec(datum.getMjesec());
+        setGodina(datum.getGodina());
+        
     }
+    
     // Z1.4 :: getteri i setteri
-    int getDan() const { return 0; } // implementirati funkciju
-    int getMjesec() const { return 0; } // implementirati funkciju
-    int getGodina() const { return 0; } // implementirati funkciju
+    int getDan() const {
+        return (_dan == nullptr) ? 1 : *_dan;
+    }
+    
+    int getMjesec() const {
+        return (_mjesec == nullptr) ? 1 : *_mjesec;
+    }
+    
+    int getGodina() const {
+        return (_godina == nullptr) ? 1 : *_godina;
+    }
+    
     void setDan(int dan) {
-        // implementirati funkciju
+        
+        if (_dan == nullptr) {
+            _dan = new int;
+        }
+        
+        *_dan = dan;
+        
     }
+    
     void setMjesec(int mjesec) {
-        // implementirati funkciju
+        
+        if (_mjesec == nullptr) {
+            _mjesec = new int;
+        }
+        
+        *_mjesec = mjesec;
+        
     }
+    
     void setGodina(int godina) {
-        // implementirati funkciju
+        
+        if (_godina == nullptr) {
+            _godina = new int;
+        }
+        
+        *_godina = godina;
+        
     }
+    
     // Z1.5 :: metoda za kopiranje vrijednosti objekta
-    void set(const Datum& obj) {
-        // implementirati funkciju
+    void set(const Datum& datum) {
+        
+        setDan(datum.getDan());
+        setMjesec(datum.getMjesec());
+        setGodina(datum.getGodina());
+        
     }
+    
     // Z1.6
     void ispis() const {
-        // implementirati funkciju
+        
+        cout << getDan() << "." << getMjesec() << "." << getGodina();
+        
     }
+    
     // Z1.7
     ~Datum() {
-        // implementirati funkciju
+        
+        delete _dan, delete _mjesec, delete _godina;
+        
     }
+    
 };
-class Glumac
-{
-    char* _ime{ nullptr };
-    char* _prezime{ nullptr };
-    char* _zemljaPorijekla{ nullptr };
-    Datum* _datumRodjenja{ nullptr };
-    bool* _spol{ nullptr }; //1-Muski, 0-Zenski
+
+class Glumac {
+    
+    char* _ime { nullptr };
+    char* _prezime { nullptr };
+    char* _zemljaPorijekla { nullptr };
+    Datum* _datumRodjenja { nullptr };
+    bool* _spol { nullptr };    // 1 - Muski, 0 - Zenski
+    
 public:
+    
     // Z2.0 :: dflt. ctor
     Glumac() {
+        
+        setIme("Unknown");
+        setPrezime("Unknown");
+        setZemljaPorijekla("Unknown");
+        setDatumRodjenja(Datum(1, 1, 2024));
+        setSpol(true);
+        
     }
+    
     // Z2.1 user-def. ctor
-    Glumac(const char* ime, const char* prez, const char* zemlja, Datum datumRodjenja, bool spol) {
-        // implementirati funkciju
+    Glumac(const char* ime, const char* prezime, const char* zemlja, Datum datumRodjenja, bool spol) {
+        
+        setIme(ime);
+        setPrezime(prezime);
+        setZemljaPorijekla(zemlja);
+        setDatumRodjenja(datumRodjenja);
+        setSpol(spol);
+        
     }
+    
     // Z2.2 :: copy ctor
-    Glumac(const Glumac& obj) {
-        // implementirati funkciju
+    Glumac(const Glumac& glumac) {
+        
+        setIme(glumac.getIme());
+        setPrezime(glumac.getPrezime());
+        setZemljaPorijekla(glumac.getZemljaPorijekla());
+        setDatumRodjenja(glumac.getDatumRodjenja());
+        setSpol(glumac.getSpol());
+        
     }
-
 
     // Z2.3 :: getteri i setteri
-    const char* getIme() const { return ""; } // implementirati funkciju
-    const char* getPrezime() const { return ""; } // implementirati funkciju
-    const char* getZemljaPorijekla() const { return ""; } // implementirati funkciju
-    Datum getDatumRodjenja() const { return Datum(1, 1, 2024); } // implementirati funkciju
-    bool getSpol() const { return false; } // implementirati funkciju
+    const char* getIme() const {
+        return (_ime == nullptr) ? "" : _ime;
+    }
+    
+    const char* getPrezime() const {
+        return (_prezime == nullptr) ? "" : _prezime;
+    }
+    
+    const char* getZemljaPorijekla() const {
+        return (_zemljaPorijekla == nullptr) ? "" : _zemljaPorijekla;
+    }
+    
+    Datum getDatumRodjenja() const {
+        return (_datumRodjenja == nullptr) ? Datum(1, 1, 2024) : *_datumRodjenja;
+    }
+    
+    bool getSpol() const {
+        return (_spol == nullptr) ? true : *_spol;
+    }
 
     void setIme(const char* ime) {
-        // implementirati funkciju
+        
+        // [temporary] "oscars 2024", pok, const, const pok
+        
+        delete[] _ime;
+        _ime = alocirajTekst(ime);
+        
     }
+    
     void setPrezime(const char* prezime) {
-        // implementirati funkciju
+        
+        delete[] _prezime;
+        _prezime = alocirajTekst(prezime);
+        
     }
+    
     void setZemljaPorijekla(const char* zemlja) {
-        // implementirati funkciju
+        
+        delete[] _zemljaPorijekla;
+        _zemljaPorijekla = alocirajTekst(zemlja);
+        
     }
+    
+    // copy ctor
     void setDatumRodjenja(Datum datumRodjenja) {
-        // implementirati funkciju
+        
+        if (_datumRodjenja == nullptr) {
+            _datumRodjenja = new Datum;
+        }
+        
+        _datumRodjenja->set(datumRodjenja);
+        
     }
+    
     void setSpol(bool spol) {
-        // implementirati funkciju
+        
+        if (_spol == nullptr) {
+            _spol = new bool;
+        }
+        
+        *_spol = spol;
+        
     }
+    
     // Z2.4 :: metoda za kopiranje vrijednosti
-    void set(const Glumac& g) {
-        // implementirati funkciju
+    void set(const Glumac& glumac) {
+        
+        setIme(glumac.getIme());
+        setPrezime(glumac.getPrezime());
+        setZemljaPorijekla(glumac.getZemljaPorijekla());
+        setDatumRodjenja(glumac.getDatumRodjenja());
+        setSpol(glumac.getSpol());
+        
     }
+    
     // Z2.5
     void ispis() const {
+        
         // implementirati funkciju
+        
     }
+    
     // Z2.6
     ~Glumac() {
+        
         // implementirati funkciju
+        
     }
+    
 };
 
 class Epizoda {
+    
     char* _naziv{ nullptr };
-    int* _trajanje{ nullptr }; //u minutama
+    int* _trajanje{ nullptr };  // u minutama
     char _kratakSadrzaj[100] = "";
     Datum _datumPremijere;
 
     int _maxOcjena; // velicina niza '_ocjene'
-    int _trenutnoOcjena = 0; //brojac
+    int _trenutnoOcjena = 0;    // brojac
     int* _ocjene{ nullptr };
+    
 public:
+    
     // Z3.0 :: dflt ctor
     Epizoda() {
-    }
-    // Z3.1 :: user-def ctor
-    Epizoda(const char* naziv, int trajanje, const char* kratakOpis, Datum datumPremijere, int ukupnoOcjena)
-    {
+        
         // implementirati funkciju
+        
+    }
+    
+    // Z3.1 :: user-def ctor
+    Epizoda(const char* naziv, int trajanje, const char* kratakOpis, Datum datumPremijere, int ukupnoOcjena) {
+        
+        // implementirati funkciju
+        
     }
 
     // Z3.2 :: copy ctor
     Epizoda(const Epizoda& obj) {
+        
         // implementirati funkciju
+        
     }
 
     // Z3.3 :: getteri
     const char* getNaziv() const { return ""; } // implementirati funkciju
-    int getTrajanje() const { return 0; }  // implementirati funkciju
+    int getTrajanje() const { return 0; }   // implementirati funkciju
     const char* getKratakSadrzaj() const { return ""; } // implementirati funkciju
     Datum getDatumPremijere() const { return _datumPremijere; }
     int getTrenutnoOcjena() const { return _trenutnoOcjena; }
     int getMaxBrojOcjena() const { return _maxOcjena; }
-    int* getOcjene() const { return nullptr; } // implementirati funkciju
+    int* getOcjene() const { return nullptr; }  // implementirati funkciju
+    
     int getOcjena(int index) const {
+        
         // implementirati funkciju
         return 0;
+        
     }
+    
     // Z3.4 :: setteri
     void setNaziv(const char* naziv) {
+        
         // implementirati funkciju
+        
     }
+    
     void setTrajanje(int trajanje) {
+        
         // implementirati funkciju
+        
     }
+    
     void setKratakSadrzaj(const char* kratakSadrzaj) {
+        
         // implementirati funkciju
+        
     }
+    
     void setDatumPremijere(Datum datum) {
+        
         // implementirati funkciju
+        
     }
+    
     // Z3.5 :: metoda koja brise postojeci niz i kreira novi na osnovu tri unesena parametra
     // također, metoda mora uraditi kopiranje ocjena ako je ulazni pokazivač 'ocjene' različit od NULL
     void setOcjene(int trenutnoOcjena, int maxOcjena, int* ocjene = nullptr) {
+        
         // implementirati funkciju
+        
     }
 
     // Z3.6 :: metoda za kopiranje vrijednosti
     void set(const Epizoda& e) {
+        
         // implementirati funkciju
+        
     }
-
 
     // Z3.7
     // Prosiriti niz _ocjene na sljedeci nacin:
-    //  *Konstruisati novi niz velicine [_maxBrojOcjena + prosiriZa]
-    //  *Kopirati vrijednosti iz starog niza u novi niz
-    //  *Dealocirati stari niz
+    //  * Konstruisati novi niz velicine [_maxBrojOcjena + prosiriZa]
+    //  * Kopirati vrijednosti iz starog niza u novi niz
+    //  * Dealocirati stari niz
     void expandOcjene(int uvecanje) {
+        
         // implementirati funkciju
+        
     }
 
     // Z3.8 :: metoda za dodavanje ocjene
     // Ukoliko je brojac dosao do kraja (jednak velicini niza), uraditi prosirivanje niza za 10 elemenata
     void dodajOcjenu(int ocjena) {
+        
         // implementirati funkciju
+        
     }
+    
     // Z3.9 :: metoda za uklanjanje zadnje ocjene
     bool ukloniZadnjuOcjenu() {
+        
         // implementirati funkciju
         return false;
+        
     }
     // Z3.10
     float getProsjecnaOcjena() const {
+        
         // implementirati funkciju
-        return  0.0f;
+        return 0.0f;
+        
     }
+    
     // Z3.11
     void ispis() const {
+        
         // implementirati funkciju
+        
     }
+    
     // Z3.12
     ~Epizoda() {
+        
         // implementirati funkciju
+        
     }
+    
 };
+
 class Uloga {
+    
     Glumac* _glumac{ nullptr };
     char* _opis{ nullptr };
-    char* _tipUloge{ nullptr }; //Glavna, sporedna, epizodna, statista, gostujuca zvijezda, cameo ...
+    char* _tipUloge{ nullptr }; // Glavna, sporedna, epizodna, statista, gostujuca zvijezda, cameo ...
+    
 public:
+    
     // Z4.0 :: dflt ctor
+    
     Uloga() {
+        
+        // implementirati funkciju
+        
     }
+    
     // Z4.1 :: user-def ctor
     Uloga(Glumac glumac, const char* opis, const char* tip) {
+    
         // implementirati funkciju
+        
     }
+    
     // Z4.2 :: copy ctor
     Uloga(const Uloga& obj) {
+        
         // implementirati funkciju
+        
     }
+    
     // Z4.2 :: getteri i setteri
     Glumac getGlumac() const { return Glumac(); }  // implementirati funkciju
     const char* getOpis() const { return ""; } // implementirati funkciju
