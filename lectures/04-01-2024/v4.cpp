@@ -285,174 +285,309 @@ Datum operator +(Datum& datum, int brojDana) {
 
 // Z1.11 :: Provjeriti da li je 'd1' veci (noviji datum) od 'd2'
 bool operator >(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return false;
+    return d1.getGodina() * 365 + d1.getMjesec() * 30 + d1.getDan() > d2.getGodina() * 365 + d2.getMjesec() * 30 + d2.getDan();
 }
 
 bool operator >=(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return false;
+    return (d1 > d2) || (d1 == d2);
 }
 
 bool operator <(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return false;
+    return !(d1 >= d2);
 }
 
 bool operator <=(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return false;
+    return !(d1 > d2);
 }
 
 // Z1.12 :: Od dva datuma vratiti onaj stariji
 const Datum& min(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return d1;
+    return (d1 < d2) ? d1 : d2;
 }
 
 // Z1.13 :: Od dva datuma vratiti onaj noviji
 const Datum& max(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return d1;
+    return (d1 > d2) ? d1 : d2;
 }
 
 // Z1.14 :: Izracunati razliku (u danima) izmedju datumskih objekata 'd1' i 'd2'
 int operator -(Datum& d1, Datum& d2) {
-    // Implementirati funkciju
-    return 0;
+    
+    /*
+     
+        Datum d1(5, 5, 2025);
+        Datum d2(4, 4, 2024);
+     
+        cout << (d1 - d2) << endl;
+     
+     */
+    
+    if (d1 == d2) {
+        return 0;
+    }
+    
+    int counter = 0;
+    
+    Datum stariji = min(d1, d2);
+    Datum noviji = max(d1, d2);
+    
+    while (stariji + counter < noviji) {
+        counter++;
+    }
+    
+    return counter;
+    
 }
 
 class Clan {
+    
     const int _clanId;
     char _korisnickoIme[30] = "";
     char _lozinka[20] = "";
     Datum* _datumRegistracije = nullptr;
     bool* _spol = nullptr;
+    
     // staticki atribut
     static int _brojacClanova;
+    
 public:
 
     // Z2.1 :: getteri
-    const int getClanId() const { return _clanId; }
-    const char* getKorisnickoIme() const { return _korisnickoIme; }
-    const char* getLozinka() const { return _lozinka; }
-    Datum getDatumRegistracije() const { return (_datumRegistracije == nullptr) ? Datum(1, 1, 2023) : *_datumRegistracije; }
-    bool getSpol() const { return (_spol == nullptr) ? false : *_spol; }
+    const int getClanId() const {
+        return _clanId;
+    }
+    
+    const char* getKorisnickoIme() const {
+        return _korisnickoIme;
+    }
+    
+    const char* getLozinka() const {
+        return _lozinka;
+    }
+    
+    Datum getDatumRegistracije() const {
+        return (_datumRegistracije == nullptr) ? Datum(1, 1, 2023) : *_datumRegistracije;
+    }
+    
+    bool getSpol() const {
+        return (_spol == nullptr) ? false : *_spol;
+    }
+    
     // staticki getter [dohvacanje vrijednosti statickog atributa 'brojacClanova'. prilikom dohvacanja uvecati vrijednost brojaca]
-    static int getNextId() { return Clan::_brojacClanova++; }
-
+    static int getNextId() {
+        return Clan::_brojacClanova++;
+    }
 
     // Z2.2 :: setteri
     void setKorisnickoIme(const char* korisnickoIme) {
-        // Implementirati funkciju
+        strcpy_s(_korisnickoIme, size(_korisnickoIme), korisnickoIme);
     }
+    
     void setLozinka(const char* lozinka) {
-        // Implementirati funkciju
+        strcpy_s(_lozinka, size(_lozinka), lozinka);
     }
+    
     void setDatumRegistracije(Datum datumRegistracije) {
-        // Implementirati funkciju
+        
+        if (_datumRegistracije == nullptr) {
+            _datumRegistracije = new Datum; // Dflt ctor
+        }
+        
+        *_datumRegistracije = datumRegistracije;    // Datum::operator=
+        
     }
     void setSpol(bool spol) {
-        // Implementirati funkciju
+        
+        if (_spol == nullptr) {
+            _spol = new bool;
+        }
+        
+        *_spol = spol;
+        
     }
 
     //  Z2.3 :: Dflt. ctor  [Postaviti konstantu '_clanId' na povratnu vrijednost staticke funkcije 'getNextId']
     Clan() : _clanId(getNextId()) {
+        
+        //
+        
     }
+    
     //  Z2.4 :: User-def. ctor [Postaviti _clanId na na povratnu vrijednost staticke funkcije 'getNextId'].
-    Clan(const char* korisnickoIme, const char* lozinka, Datum datumReg, bool spol) :_clanId(getNextId())
-    {
-        // Implementirati funkciju
+    Clan(const char* korisnickoIme, const char* lozinka, Datum datumRegistracije, bool spol) :_clanId(getNextId()) {
+        
+        setKorisnickoIme(korisnickoIme);
+        setLozinka(lozinka);
+        setDatumRegistracije(datumRegistracije);
+        setSpol(spol);
+        
     }
+    
     //  Z2.5 :: Copy ctor [kopirati obj._clanId u _clanId] :: koristiti getter 'obj.GetClanId'
-    Clan(const Clan& obj) : _clanId(obj.getClanId()) {
-        // Implementirati funkciju
+    Clan(const Clan& clan) : _clanId(clan.getClanId()) {
+        
+        setKorisnickoIme(clan.getKorisnickoIme());
+        setLozinka(clan.getLozinka());
+        setDatumRegistracije(clan.getDatumRegistracije());
+        setSpol(clan.getSpol());
+        
     }
 
     // Z2.6 :: operator dodjele
-    Clan& operator = (const Clan& obj) {
-        // Implementirati funkciju
+    Clan& operator =(const Clan& clan) {
+        
+        if (this != &clan) {
+            
+            setKorisnickoIme(clan.getKorisnickoIme());
+            setLozinka(clan.getLozinka());
+            setDatumRegistracije(clan.getDatumRegistracije());
+            setSpol(clan.getSpol());
+            
+        }
+        
         return *this;
     }
 
     // Z2.7 :: dtor
     ~Clan() {
-        // Implementirati funkciju
+        delete _datumRegistracije, delete _spol;
     }
+    
 };
-int Clan::_brojacClanova = 1; //  Inicijalizacija statickog atributa
+
+int Clan::_brojacClanova = 1;   // Inicijalizacija statickog atributa
 
 // Z2.8 :: Ispisati podatke o clanu
 ostream& operator <<(ostream& COUT, const Clan& clan){
-    // Implementirati funkciju
+    
+    COUT << "Korisnicko ime: " << clan.getKorisnickoIme() << endl;
+    COUT << "Datum registracije" << clan.getDatumRegistracije() << endl;
+    COUT << "Spol: " << (clan.getSpol() ? "Muski" : "Zenski") << endl;
+    
     return COUT;
+    
 }
 
 // Z2.9 :: operator == [Porediti clanove 'c1' i 'c2' po korisnickom imenu]
 bool operator ==(const Clan& c1, const Clan& c2) {
-    // Implementirati funkciju
-    return false;
+    return strcmp(c1.getKorisnickoIme(), c2.getKorisnickoIme()) == 0;
 }
 
 class Post {
+    
     char* _postId = nullptr;
-    char* _korisnickoIme = nullptr; //  _korisnickoIme clana foruma koji je objavio post
+    char* _korisnickoIme = nullptr; // _korisnickoIme clana foruma koji je objavio post
     Datum _datumObjavljivanja;
     char* _sadrzaj = nullptr;
-    //  staticki atribut
+    
+    // staticki atribut
     static int _postIdCounter;
+    
 public:
 
     // Z3.1 :: getteri
-    const char* getPostId() const { return (_postId == nullptr) ? "" : _postId; }
-    const char* getKorisnickoIme() const { return (_korisnickoIme == nullptr) ? "" : _korisnickoIme; }
-    Datum getDatumObjavljivanja() const { return _datumObjavljivanja; }
-    const char* getSadrzaj() const { return (_sadrzaj == nullptr) ? "" : _sadrzaj; }
+    const char* getPostId() const {
+        return (_postId == nullptr) ? "" : _postId;
+    }
+    
+    const char* getKorisnickoIme() const {
+        return (_korisnickoIme == nullptr) ? "" : _korisnickoIme;
+    }
+    
+    Datum getDatumObjavljivanja() const {
+        return _datumObjavljivanja;
+    }
+    
+    const char* getSadrzaj() const {
+        return (_sadrzaj == nullptr) ? "" : _sadrzaj;
+    }
+    
     // staticka funkcija [vraca vrijednost brojaca i uvecava ga za 1
-    static int getNextId() { return Post::_postIdCounter++; }
+    static int getNextId() {
+        return Post::_postIdCounter++;
+    }
 
     // Z3.2 :: setteri
     // settovati '_postId' na vrijednost konverzije rezultata staticke funkcije 'getNextId' u tip char* [funkcija IntToStr]
     void setPostId() {
-        // Implementirati funkciju
+        
+        delete[] _postId;
+        _postId = intToStr(Post::getNextId());  // 1024 -> "1024\0" -> pohraniti u _postId -> uvecati ce 1024 na 1025
+        
     }
+    
+    void setPostId(const char* postId) {
+        
+        delete[] _postId;
+        _postId = alocirajTekst(postId);
+        
+    }
+    
     void setKorisnickoIme(const char* korisnickoIme) {
-        // Implementirati funkciju
+        
+        delete[] _korisnickoIme;
+        _korisnickoIme = alocirajTekst(korisnickoIme);
+        
     }
-    void setDatumObjavljivanja(Datum d) {
-        // Implementirati funkciju
+    
+    void setDatumObjavljivanja(Datum datum) {
+        _datumObjavljivanja = datum;
     }
+    
     void setSadrzaj(const char* sadrzaj) {
-        // Implementirati funkciju
+        
+        delete[] _sadrzaj;
+        _sadrzaj = alocirajTekst(sadrzaj);
+        
     }
-
 
     // Z3.3 :: dflt ctor
     Post() {
+        
+        //
+        
     }
+    
     // Z3.4 :: Za inicijalizaciju _postId iskoristiti setter funkciju 'setPostId'
-    Post(const char* korisnickoIme, Datum datumO, const char* sadrzaj)
-    {
-        // Implementirati funkciju
+    Post(const char* korisnickoIme, Datum datumObjavljivanja, const char* sadrzaj) {
+        
+        setPostId();
+        setKorisnickoIme(korisnickoIme);
+        setDatumObjavljivanja(datumObjavljivanja);
+        setSadrzaj(sadrzaj);
+        
     }
 
     // Z3.5 :: Za inicijalizaciju _postId iskoristiti setter funkciju 'setPostId'
-    Post(const Post& obj) {
-        // Implementirati funkciju
+    Post(const Post& post) {
+        
+        setPostId();
+        setKorisnickoIme(post.getKorisnickoIme());
+        setDatumObjavljivanja(post.getDatumObjavljivanja());
+        setSadrzaj(post.getSadrzaj());
+        
     }
 
     // Z3.6 :: operator dodjele
-    Post& operator = (const Post& obj) {
-        // Implementirati funkciju
+    Post& operator =(const Post& post) {
+        
+        setPostId()
+        setKorisnickoIme(post.getKorisnickoIme());
+        setDatumObjavljivanja(post.getDatumObjavljivanja());
+        setSadrzaj(post.getSadrzaj());
+        
         return *this;
+        
     }
 
     // Z3.7 :: dtor
     ~Post() {
-        // Implementirati funkciju
+        delete[] _postId, delete[] _korisnickoIme, delete[] _sadrzaj;
     }
+    
 };
-int Post::_postIdCounter = 1000; //  Inicijalizacija statickog atributa
+
+int Post::_postIdCounter = 1000;    // Inicijalizacija statickog atributa
 
 // Z3.8 :: Ispisati podatke o postu
 ostream& operator <<(ostream& COUT, const Post& p) {
@@ -461,6 +596,7 @@ ostream& operator <<(ostream& COUT, const Post& p) {
 }
 
 const int maxBrojPostova = 100;
+
 class Sekcija {
     char* _naziv = nullptr;
     char* _kratakOpis = nullptr;
